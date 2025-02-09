@@ -62,7 +62,7 @@ func main() {
 	c.AddFunc("30 2 * * *", func() {
 		signInInfo, err := ttapi.SignIn(token)
 		if err != nil || signInInfo != "{}" {
-			fmt.Println("【定时签到】签到失败：", err)
+			fmt.Println("【定时签到】签到失败：", signInInfo, err)
 		} else {
 			fmt.Println(time.Now().Format("2006-01-02 15:04:05"), " 【定时签到】签到成功！")
 		}
