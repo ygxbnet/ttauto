@@ -26,3 +26,5 @@ go.work.sum
 
 .idea
 union_id
+# Added by goreleaser init:
+dist/
