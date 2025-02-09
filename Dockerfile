@@ -1,7 +1,7 @@
 FROM golang AS builder
 
 RUN go env -w GO111MODULE=auto \
-  && go env -w CGO_ENABLED=0 \
+  && go env -w CGO_ENABLED=0
 
 WORKDIR /build
 
