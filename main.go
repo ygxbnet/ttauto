@@ -56,10 +56,10 @@ func main() {
 
 	refreshTokensRegularly() // 定时刷新 token
 
-	// 定时任务，每天 2:30 定时执行一次
+	// 定时任务，每天 3:00 定时执行一次
 	c := cron.NewWithLocation(time.FixedZone("CST", 8*3600))
-	fmt.Println("【定时任务】已开启定时任务，每天 2:30 定时签到")
-	c.AddFunc("30 2 * * *", func() {
+	fmt.Println("【定时任务】已开启定时任务，每天 3:00 定时签到")
+	c.AddFunc("0 3 * * *", func() {
 		signInInfo, err := ttapi.SignIn(token)
 		if err != nil || signInInfo != "{}" {
 			fmt.Println("【定时签到】签到失败：", signInInfo, err)
