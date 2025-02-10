@@ -84,7 +84,7 @@ func login() {
 	if err != nil {
 		log.Panic(err)
 	}
-	fmt.Println(captchaURL, "\n2.请访问上面的网址，然后在此输入4位验证了码：")
+	fmt.Println(captchaURL, "\n2.请访问上面的网址，然后在此输入4位验证码：")
 	fmt.Scanln(&captchaCode)
 
 	// 获取短信验证码
@@ -111,11 +111,11 @@ reLogin:
 	}
 	fmt.Println("登陆成功！")
 	fmt.Printf(`===================================
-	用户名：%s
-	手机号：%s
-	等级：%s
-	union_id：%s
-	token：%s
+用户名：%s
+手机号：%s
+等级：%s
+union_id：%s
+token：%s
 ===================================
 `,
 		gjson.Get(userInfo, "data.nickName"),
