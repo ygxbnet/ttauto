@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/robfig/cron"
+	"github.com/robfig/cron/v3"
 	"github.com/tidwall/gjson"
 	"log"
 	"os"
@@ -57,14 +57,15 @@ func main() {
 	refreshTokensRegularly() // 定时刷新 token
 
 	// 定时任务，每天 3:00 定时执行一次
-	c := cron.New()
+	location, _ := time.LoadLocation("Asia/Shanghai")
+	c := cron.New(cron.WithLocation(location))
 	fmt.Println("【定时任务】已开启定时任务，每天 3:00 定时签到")
 	c.AddFunc("0 3 * * *", func() {
 		signInInfo, err := ttapi.SignIn(token)
 		if err != nil || gjson.Get(signInInfo, "errCode").Int() != 0 {
-			fmt.Println("【定时签到】签到失败：", signInInfo, err)
+			fmt.Println(time.Now().Format("2006-01-02 15:04:05"), "【定时签到】签到失败：", signInInfo, err)
 		} else {
-			fmt.Println(time.Now().Format("2006-01-02 15:04:05"), " 【定时签到】签到成功！")
+			fmt.Println(time.Now().Format("2006-01-02 15:04:05"), "【定时签到】签到成功！")
 		}
 	})
 	c.Start()
@@ -141,10 +142,10 @@ func refreshTokensRegularly() {
 
 			response, err := ttapi.RefreshToken(unionID)
 			if err != nil {
-				log.Panic("【定时任务】定时刷新 token 失败，请重新登陆\n", err)
+				fmt.Println(time.Now().Format("2006-01-02 15:04:05"), "【定时任务】定时刷新 token 失败，请重新登陆\n", err)
 			}
 			token = gjson.Get(response, "data.token").String()
-			fmt.Println("【定时任务】定时刷新 token 成功")
+			fmt.Println(time.Now().Format("2006-01-02 15:04:05"), "【定时任务】定时刷新 token 成功")
 		}
 	}()
 }

@@ -3,7 +3,7 @@ module ttauto
 go 1.23
 
 require (
-	github.com/robfig/cron v1.2.0
+	github.com/robfig/cron/v3 v3.0.1
 	github.com/tidwall/gjson v1.18.0
 )
 
