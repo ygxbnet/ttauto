@@ -21,6 +21,12 @@ var (
 	unionIDFile string
 )
 
+var cronScheduler gocron.Scheduler
+
+func init() {
+	cronScheduler, _ = gocron.NewScheduler()
+}
+
 func main() {
 	fmt.Println("欢迎使用 TTAuto\n")
 
@@ -54,11 +60,21 @@ func main() {
 	fmt.Println("union_id 有效，token 刷新成功！")
 	token = gjson.Get(response, "data.token").String()
 
-	refreshTokensRegularly() // 定时刷新 token
+	// 每40小时定时刷新 token
+	cronScheduler.NewJob(
+		gocron.DurationJob(40*time.Hour),
+		gocron.NewTask(func() {
+			response, err := ttapi.RefreshToken(unionID)
+			if err != nil {
+				fmt.Println(time.Now().Format("2006-01-02 15:04:05"), "【定时任务】定时刷新 token 失败，请重新登陆\n", err)
+			}
+			token = gjson.Get(response, "data.token").String()
+			fmt.Println(time.Now().Format("2006-01-02 15:04:05"), "【定时任务】定时刷新 token 成功")
+		}),
+	)
 
 	// 定时任务，每天 3:00 定时执行一次
 	fmt.Println("【定时任务】已开启定时任务，每天 3:00 定时签到")
-	cronScheduler, _ := gocron.NewScheduler()
 	cronScheduler.NewJob(
 		gocron.CronJob(`TZ=Asia/Shanghai 0 3 * * *`, false),
 		gocron.NewTask(func() {
@@ -70,8 +86,8 @@ func main() {
 			}
 		}),
 	)
-	cronScheduler.Start()
 
+	cronScheduler.Start()
 	// 阻塞
 	select {}
 }
@@ -133,21 +149,4 @@ token：%s
 		log.Panic("保存 union_id 失败，请手动保存\n", err)
 	}
 	fmt.Println("已将 union_id 保存至以下文件中\n", unionIDFile)
-}
-
-// 定时刷新 token
-func refreshTokensRegularly() {
-	ticker := time.NewTicker(40 * time.Hour) // 40小时刷新一次
-	go func() {
-		for {
-			<-ticker.C
-
-			response, err := ttapi.RefreshToken(unionID)
-			if err != nil {
-				fmt.Println(time.Now().Format("2006-01-02 15:04:05"), "【定时任务】定时刷新 token 失败，请重新登陆\n", err)
-			}
-			token = gjson.Get(response, "data.token").String()
-			fmt.Println(time.Now().Format("2006-01-02 15:04:05"), "【定时任务】定时刷新 token 成功")
-		}
-	}()
 }
