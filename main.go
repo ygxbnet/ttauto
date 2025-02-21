@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/robfig/cron/v3"
+	"github.com/go-co-op/gocron/v2"
 	"github.com/tidwall/gjson"
 	"log"
 	"os"
@@ -57,18 +57,20 @@ func main() {
 	refreshTokensRegularly() // 定时刷新 token
 
 	// 定时任务，每天 3:00 定时执行一次
-	location, _ := time.LoadLocation("Asia/Shanghai")
-	c := cron.New(cron.WithLocation(location))
 	fmt.Println("【定时任务】已开启定时任务，每天 3:00 定时签到")
-	c.AddFunc("0 3 * * *", func() {
-		signInInfo, err := ttapi.SignIn(token)
-		if err != nil || gjson.Get(signInInfo, "errCode").Int() != 0 {
-			fmt.Println(time.Now().Format("2006-01-02 15:04:05"), "【定时签到】签到失败：", signInInfo, err)
-		} else {
-			fmt.Println(time.Now().Format("2006-01-02 15:04:05"), "【定时签到】签到成功！")
-		}
-	})
-	c.Start()
+	cronScheduler, _ := gocron.NewScheduler()
+	cronScheduler.NewJob(
+		gocron.CronJob(`TZ=Asia/Shanghai 0 3 * * *`, false),
+		gocron.NewTask(func() {
+			signInInfo, err := ttapi.SignIn(token)
+			if err != nil || gjson.Get(signInInfo, "errCode").Int() != 0 {
+				fmt.Println(time.Now().Format("2006-01-02 15:04:05"), "【定时签到】签到失败：", signInInfo, err)
+			} else {
+				fmt.Println(time.Now().Format("2006-01-02 15:04:05"), "【定时签到】签到成功！")
+			}
+		}),
+	)
+	cronScheduler.Start()
 
 	// 阻塞
 	select {}
