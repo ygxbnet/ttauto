@@ -35,19 +35,19 @@ changelog:
   sort: asc
   groups:
     - title: 新增功能：
-      regexp: '^feat'
+      regexp: '^.*?feat'
       order: 0
     - title: 错误修复：
-      regexp: '^fix'
+      regexp: '^.*?fix'
       order: 1
     - title: 文档更改：
-      regexp: '^docs'
+      regexp: '^.*?docs'
       order: 2
     - title: 代码重构：
-      regexp: '^refactor'
+      regexp: '^.*?refactor'
       order: 3
     - title: 构建更改：
-      regexp: '^chore'
+      regexp: '^.*?chore'
       order: 4
     - title: 其他
       order: 100
