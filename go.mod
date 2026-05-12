@@ -3,7 +3,7 @@ module ttauto
 go 1.24
 
 require (
-	github.com/go-co-op/gocron/v2 v2.19.1
+	github.com/go-co-op/gocron/v2 v2.21.1
 	github.com/tidwall/gjson v1.18.0
 )
 
