@@ -4,7 +4,7 @@ go 1.24
 
 require (
 	github.com/go-co-op/gocron/v2 v2.21.2
-	github.com/tidwall/gjson v1.19.0
+	github.com/tidwall/gjson v1.20.0
 )
 
 require (
